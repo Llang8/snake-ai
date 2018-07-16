@@ -1,0 +1,40 @@
+body {
+  background-color: black;
+}
+h2 {
+  color: white;
+  text-align: center;
+  font-size: 50px;
+  font-family: 'helvetica neue',   sans-serif;
+}
+canvas {
+  border: 10px solid white;
+  text-align: center;
+} 
+
+#time-bar{
+  background: black;
+  border: 1px solid white;
+  height: 30px;
+  width: 400px;
+  position: relative;
+  margin: 20px auto;
+  right: 0;
+  left: 0;
+  top: 20;
+}
+.btn {
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #000000;
+  font-size: 13px;
+  background: #ffffff;
+  padding: 10px 20px 10px 20px;
+}
+.btn:hover {
+  background: #000000;
+  border-color:white;
+  color: white;
+}
