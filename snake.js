@@ -22,14 +22,14 @@ window.onload=function() {
 function game() {
     xPos += xVel;
     yPos += yVel;
-  
+
     if(xPos<0 || xPos > gameSize - 1 || yPos < 0 || yPos > gameSize - 1) {
         resetGame();
     }
-  
+
     ctx.fillStyle="black";
     ctx.fillRect(0,0,canv.width,canv.height);
- 
+
     ctx.fillStyle="white";
     for(var i=0;i<trail.length;i++) {
         ctx.fillRect(trail[i].x*gameSize,trail[i].y*gameSize,gameSize-2,gameSize-2);
@@ -41,7 +41,7 @@ function game() {
     while(trail.length>tail) {
     trail.shift();
     }
- 
+
     if(xAccel == xPos && yAccel == yPos) {
         tail++;
         score+=5;
@@ -51,9 +51,43 @@ function game() {
     ctx.fillStyle="red";
     ctx.fillRect(xAccel*gameSize,yAccel*gameSize,gameSize-2,gameSize-2);
     document.getElementById("score").innerHTML = "Score: " + score;
+    //console.log(getPosArr());
 }
-function keyPush(evt) {
-    switch(evt.keyCode) {
+function keyPush(input) {
+
+    if ( input < -(1/3)) {
+
+      if (yVel == -1) { // If snake is moving up
+        xVel = -1;
+        yVel = 0;
+      } else if ( yVel == 1) { // If snake is moving down
+        xVel = 1;
+        yvel = 0;
+      } else if ( xVel == -1) { // If snake is moving left
+        xVel = 0;
+        yVel = 1;
+      } else { // If snake is moving right
+        xVel = 0;
+        yVel = -1;
+      }
+
+    } else if ( input > ( 1/3)){
+      if (yVel == -1) { // If snake is moving up
+        xVel = 1;
+        yVel = 0;
+      } else if ( yVel == 1) { // If snake is moving down
+        xVel = -1;
+        yvel = 0;
+      } else if ( xVel == -1) { // If snake is moving left
+        xVel = 0;
+        yVel = -1;
+      } else { // If snake is moving right
+        xVel = 0;
+        yVel = 1;
+      }
+    }
+    /*
+    switch(input.keyCode) {
         case 37:
             if (xVel != 1) {
               xVel = -1;
@@ -78,7 +112,7 @@ function keyPush(evt) {
               yVel = 1;
             }
             break;
-    }
+    }*/
 }
 function resetGame() {
    if ( score > highScore) {
@@ -91,5 +125,138 @@ function resetGame() {
    yVel = 0;
    xPos = 10;
    yPos = 10;
-   
+
+}
+
+function getPosArr() {
+  // Array pos:
+  // 0: left of snake
+  // 1: front of snake
+  // 2: right of snake
+  // 3: suggested movement
+  //    if arr[3] =
+  //    -1: turn left
+  //     0: go forward
+  //     1: turn right
+  var arr = [0,0,0,0];
+  if ( yVel == -1 ) { // If snake is moving up
+
+    if ( xPos == 0) {
+      arr[0] = 1;
+    }
+    if ( yPos == 0) {
+      arr[1] = 1;
+
+    }
+    if ( xPos == gameSize - 1) {
+      arr[2] = 1;
+    }
+    for ( var i = 0; i < trail.length; i++) {
+      // If trail cell xPos is to the left and yPos is equal there is cell left
+      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
+        arr[0] = 1;
+      }
+      // If trail cell ypos is -1  than x is equal there is cell forward
+      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
+        arr[1] = 1;
+      }
+      // If xpos is +1 than ypos is equal there is cell right
+      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
+        arr[2] = 1;
+      }
+    }
+
+  } else if ( yVel == 1) { // If snake is moving down
+
+    if ( xPos == gameSize - 1) {
+      arr[0] = 1;
+    }
+    if ( yPos == gameSize - 1) {
+      arr[1] = 1;
+    }
+    if ( xPos == 0) {
+      arr[2] = 1;
+    }
+    for ( var i = 0; i < trail.length; i++) {
+      // If trail cell xPos is 1 greater and y is equal there is cell left
+      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
+        arr[0] = 1;
+      }
+      // If trail cell yPos is 1 greater and x is equal there is cell forward
+      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
+        arr[1] = 1;
+      }
+      // If trail cell xPos is to the left and yPos is equal there is cell right
+      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
+        arr[2] = 1;
+      }
+    }
+
+  } else if ( xVel == -1) { // If snake is moving left
+    if ( yPos == gameSize - 1) {
+      arr[0] = 1;
+    }
+    if ( xPos == 0) {
+      arr[1] = 1;
+    }
+    if ( yPos == 0) {
+      arr[2] = 1;
+    }
+    for ( var i = 0; i < trail.length; i++) {
+      // If trail cell xPos is equal and yPos is +1 there is cell left
+      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
+        arr[0] = 1;
+      }
+      // If trail cell xPos is -1 and y is equal there is cell forward
+      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
+        arr[1] = 1;
+      }
+      // If trail cell yPos is 1 less than and x is equal there is cell right
+      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
+        arr[2] = 1;
+      }
+    }
+  } else { // If snake is moving right
+    if ( yPos == 0) {
+      arr[0] = 1;
+    }
+    if ( xPos == gameSize - 1) {
+      arr[1] = 1;
+    }
+    if ( yPos == gameSize - 1) {
+      arr[2] = 1;
+    }
+    for ( var i = 0; i < trail.length; i++) {
+      // If trail cell xPos is equal and yPos is is -1 there is cell left
+      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
+        arr[0] = 1;
+      }
+      // If trail cell xPos is +1 and y is equal there is cell forward
+      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
+        arr[1] = 1;
+      }
+      // If trail cell yPos is 1 greater and x is equal there is cell right
+      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
+        arr[2] = 1;
+      }
+    }
+  }
+  if ( arr[0] == 1 && arr[1] == 1) {
+    arr[3] = 1;
+  } else if (arr[0] == 1 && arr[2] == 1) {
+    arr[3] = -1;
+  } else if (arr[1] == 1 && arr[2] == 1) {
+    arr[3] = 0;
+  } else if (arr[0] == 1) {
+    arr[3] = 1;
+  } else if (arr[1] == 1) {
+    arr[3] = -1;
+  } else if (arr[2] == 1) {
+    arr[3] = 0;
+  } else {
+    arr[3] = 0;
+  }
+
+
+  return arr;
 }
