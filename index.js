@@ -93,17 +93,3 @@ function resetGame() {
    yPos = 10;
    
 }
-
-function increaseSpeed() {
-  if ( speedDifficulty > 0)
-    speedDifficulty -= 10;
-  clearInterval(gameSpeed);
-  gameSpeed = setInterval(game,speedDifficulty);
-}
-
-function decreaseSpeed() {
-  speedDifficulty += 10;
-  console.log(speedDifficulty);
-  clearInterval(gameSpeed);
-  gameSpeed = setInterval(game,speedDifficulty);
-}
