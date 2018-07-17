@@ -10,7 +10,7 @@ let directionTensor = tf.tensor1d(direction, 'int32');;
 directionTensor.dispose();
 
 
-const adamOpt = tf.train.adam(.1);
+const adamOpt = tf.train.adam(.001);
 model.compile({
   optimizer: adamOpt,
   loss: 'meanSquaredError'
