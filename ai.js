@@ -37,7 +37,7 @@ async function fitModel(moveRecord) {
          batchSize: 3,
          epochs: 1
      });
-     //console.log("Loss after Epoch " + i + " : " + h.history.loss[0]);
+     console.log("Loss after Epoch " + i + " : " + h.history.loss[0]);
      expected.dispose();
      posArr.dispose();
   }
