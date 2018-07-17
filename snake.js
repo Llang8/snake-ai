@@ -107,33 +107,6 @@ function keyPush(input) {
         yVel = -1;
       }
     }
-    /*
-    switch(input.keyCode) {
-        case 37:
-            if (xVel != 1) {
-              xVel = -1;
-              yVel = 0;
-            }
-            break;
-        case 38:
-            if ( yVel != 1 ) {
-              xVel = 0;
-              yVel = -1;
-            }
-            break;
-        case 39:
-            if ( xVel != -1) {
-              xVel = 1;
-              yVel = 0;
-            }
-            break;
-        case 40:
-            if ( yVel != -1) {
-              xVel = 0;
-              yVel = 1;
-            }
-            break;
-    }*/
 }
 function resetGame() {
    gameRunning = false;
