@@ -6,7 +6,8 @@ var yAccel = 15;
 var xVel = 0;
 var yVel = 0;
 var trail=[];
-var tail = 5;
+var setTail = 8;
+var tail = setTail;
 var score = 0;
 var highScore = 0;
 var speedDifficulty = 75;
@@ -14,6 +15,7 @@ var gameSpeed;
 var moveRecord = [];
 var currGen = 0;
 var gameRunning = true;
+var direction = ['left', 'forward', 'right'];
 
 window.onload=function() {
     canv = document.getElementById("canvas");
@@ -29,7 +31,6 @@ function game() {
     if (xVel != 0 || yVel != 0) {
       gameRunning = true;
     }
-    console.log(getPosArr());
     moveRecord.push(getPosArr());
     keyPush(makePrediction(getPosArr()));;
     //console.log(predictedInput);
@@ -42,13 +43,13 @@ function game() {
     ctx.fillRect(0,0,canv.width,canv.height);
 
     ctx.fillStyle="white";
-    if ( gameRunning) {
-      for(var i=0;i<trail.length;i++) {
-          ctx.fillRect(trail[i].x*gameSize,trail[i].y*gameSize,gameSize-2,gameSize-2);
-          if(trail[i].x==xPos && trail[i].y==yPos) {
-            resetGame();
-            break;
-          }
+    for(var i=0;i<trail.length;i++) {
+      ctx.fillRect(trail[i].x*gameSize,trail[i].y*gameSize,gameSize-2,gameSize-2);
+      if ( gameRunning) {
+        if(trail[i].x==xPos && trail[i].y==yPos) {
+          resetGame();
+          break;
+        }
       }
     }
     trail.push({ x:xPos , y:yPos });
@@ -69,8 +70,9 @@ function game() {
     //console.log(getPosArr());
 }
 function keyPush(input) {
-    //console.log(input);
-    if ( input < -1) {
+
+    console.log(input);
+    if ( input == 'left') {
       //console.log("in loop");
       if (yVel == -1) { // If snake is moving up
         xVel = -1;
@@ -86,7 +88,7 @@ function keyPush(input) {
         yVel = -1;
       }
 
-    } else if ( input > 1){
+    } else if ( input == 'right'){
       if (yVel == -1) { // If snake is moving up
         xVel = 1;
         yVel = 0;
@@ -99,6 +101,10 @@ function keyPush(input) {
       } else { // If snake is moving right
         xVel = 0;
         yVel = 1;
+      }
+    } else {
+      if ( yVel == 0 && xVel == 0) {
+        yVel = -1;
       }
     }
     /*
@@ -135,14 +141,13 @@ function resetGame() {
      highScore = score;
      document.getElementById("highScore").innerHTML = "Personal Best: " + highScore;
    }
-   tail = 5;
+   tail = setTail;
    score = 0;
    xVel = 0;
    yVel = 0;
    xPos = 10;
    yPos = 10;
    currGen++;
-   console.log(moveRecord);
    fitModel(moveRecord);
 
    moveRecord = [];
@@ -264,17 +269,17 @@ function getPosArr() {
   if ( arr[0] == 1 && arr[1] == 1) {
     arr[3] = 1;
   } else if (arr[0] == 1 && arr[2] == 1) {
-    arr[3] = -1;
+    arr[3] = 0;
   } else if (arr[1] == 1 && arr[2] == 1) {
-    arr[3] = 0;
-  } else if (arr[0] == 1) {
     arr[3] = 1;
+  } else if (arr[0] == 1) {
+    arr[3] = 2;
   } else if (arr[1] == 1) {
-    arr[3] = -1;
+    arr[3] = 0;
   } else if (arr[2] == 1) {
-    arr[3] = 0;
+    arr[3] = 1;
   } else {
-    arr[3] = 0;
+    arr[3] = 1;
   }
 
 
