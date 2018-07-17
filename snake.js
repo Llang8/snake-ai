@@ -6,7 +6,7 @@ var yAccel = 15;
 var xVel = 0;
 var yVel = 0;
 var trail=[];
-var setTail = 8;
+var setTail = 5;
 var tail = setTail;
 var score = 0;
 var highScore = 0;
@@ -64,7 +64,7 @@ function game() {
         yAccel = Math.floor(Math.random()*gameSize);
     }
     ctx.fillStyle="red";
-    ctx.fillRect(xAccel*gameSize,yAccel*gameSize,gameSize-2,gameSize-2);
+    ctx.fillRect(Math.getRandomInt(20)*gameSize,Math.getRandomInt(20)*gameSize,gameSize-2,gameSize-2);
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("genCount").innerHTML = "Current Generation: " + currGen;
     //console.log(getPosArr());
