@@ -28,11 +28,8 @@ model.compile({
 async function fitModel(moveRecord) {
   console.log(moveRecord);
   for (var i = 0; i < moveRecord.length; i++) {
-     var posArr = moveRecord[i];
-     const expected = tf.oneHot(tf.tensor1d([posArr[3]], 'int32'), 3).cast('float32');
-     //console.log(expected);
-     posArr.pop();
-     posArr = tf.tensor2d([posArr]);
+     const expected = tf.oneHot(tf.tensor1d([getExpected(moveRecord[i])], 'int32'), 3).cast('float32');
+     posArr = tf.tensor2d([moveRecord[i]]);
      const h = await model.fit(posArr, expected, {
          batchSize: 3,
          epochs: 1
@@ -44,7 +41,6 @@ async function fitModel(moveRecord) {
 }
 
 function makePrediction(input) {
-  input.pop();
   let inputs = tf.tensor2d([input]);
   const outputs = model.predict(inputs);
   return direction[outputs.argMax(1).dataSync()[0]];

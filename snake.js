@@ -11,11 +11,12 @@ var tail = setTail;
 var score = 0;
 var highScore = 0;
 var speedDifficulty = 75;
-var gameSpeed;
 var moveRecord = [];
 var currGen = 0;
 var gameRunning = true;
 var direction = ['left', 'forward', 'right'];
+var xApple = Math.floor(Math.random()*gameSize);
+var yApple = Math.floor(Math.random()*gameSize);
 
 window.onload=function() {
     canv = document.getElementById("canvas");
@@ -60,11 +61,11 @@ function game() {
     if(xAccel == xPos && yAccel == yPos) {
         tail++;
         score+=5;
-        xAccel = Math.floor(Math.random()*gameSize);
-        yAccel = Math.floor(Math.random()*gameSize);
+        xApple = Math.floor(Math.random()*gameSize);
+        yApple = Math.floor(Math.random()*gameSize);
     }
     ctx.fillStyle="red";
-    //ctx.fillRect(Math.getRandomInt(20)*gameSize,Math.getRandomInt(20)*gameSize,gameSize-2,gameSize-2);
+    ctx.fillRect(xApple*gameSize,yApple*gameSize,gameSize-2,gameSize-2);
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("genCount").innerHTML = "Current Generation: " + currGen;
     //console.log(getPosArr());
@@ -131,12 +132,7 @@ function getPosArr() {
   // 0: left of snake
   // 1: front of snake
   // 2: right of snake
-  // 3: suggested movement
-  //    if arr[3] =
-  //    -1: turn left
-  //     0: go forward
-  //     1: turn right
-  var arr = [0,0,0,0];
+  var arr = [0,0,0];
   if ( yVel == -1 ) { // If snake is moving up
 
     if ( xPos == 0) {
@@ -239,22 +235,35 @@ function getPosArr() {
       }
     }
   }
-  if ( arr[0] == 1 && arr[1] == 1) {
-    arr[3] = 1;
-  } else if (arr[0] == 1 && arr[2] == 1) {
-    arr[3] = 0;
-  } else if (arr[1] == 1 && arr[2] == 1) {
-    arr[3] = 1;
-  } else if (arr[0] == 1) {
-    arr[3] = 2;
-  } else if (arr[1] == 1) {
-    arr[3] = 0;
-  } else if (arr[2] == 1) {
-    arr[3] = 1;
-  } else {
-    arr[3] = 1;
-  }
-
 
   return arr;
+}
+/*
+* Takes in data that is input into the model during training and returns the
+* expected response from a prediction.
+* @params arr describing surroundings
+* arr[0]: if 1 something is to the left
+* arr[1]: if 1 something is forward
+* arr[2]: if 1 something is to the right
+* @return direction to move
+* 0: Turn left
+* 1: Go forward
+* 2: Turn Right
+*/
+function getExpected(arr) {
+  if ( arr[0] == 1 && arr[1] == 1) {
+    return 2;
+  } else if (arr[0] == 1 && arr[2] == 1) {
+    return 1;
+  } else if (arr[1] == 1 && arr[2] == 1) {
+    return 0;
+  } else if (arr[0] == 1) {
+    return 2;
+  } else if (arr[1] == 1) {
+    return 0;
+  } else if (arr[2] == 1) {
+    return 1;
+  } else {
+    return 1;
+  }
 }
