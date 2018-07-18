@@ -3,8 +3,10 @@ var direction = ['left', 'forward', 'right'];
 // initial model definition
 const model = tf.sequential();
 // Initialize output layer
-model.add(tf.layers.dense({units: 3, inputShape: [3], activation: 'linear'}));
-
+model.add(tf.layers.dense({units: 256, inputShape: [5]}));
+model.add(tf.layers.dense({units: 512, inputShape: [256]}));
+model.add(tf.layers.dense({units: 256, inputShape: [512]}));
+model.add(tf.layers.dense({units: 3, inputShape: [256]}));
 
 let directionTensor = tf.tensor1d(direction, 'int32');;
 directionTensor.dispose();
@@ -28,11 +30,8 @@ model.compile({
 async function fitModel(moveRecord) {
   console.log(moveRecord);
   for (var i = 0; i < moveRecord.length; i++) {
-     var posArr = moveRecord[i];
-     const expected = tf.oneHot(tf.tensor1d([posArr[3]], 'int32'), 3).cast('float32');
-     //console.log(expected);
-     posArr.pop();
-     posArr = tf.tensor2d([posArr]);
+     const expected = tf.oneHot(tf.tensor1d([getExpected(moveRecord[i])], 'int32'), 3).cast('float32');
+     posArr = tf.tensor2d([moveRecord[i]]);
      const h = await model.fit(posArr, expected, {
          batchSize: 3,
          epochs: 1
@@ -44,7 +43,6 @@ async function fitModel(moveRecord) {
 }
 
 function makePrediction(input) {
-  input.pop();
   let inputs = tf.tensor2d([input]);
   const outputs = model.predict(inputs);
   return direction[outputs.argMax(1).dataSync()[0]];
