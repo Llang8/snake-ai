@@ -42,6 +42,7 @@ function game() {
       ctx.fillRect(trail[i].x*gameSize,trail[i].y*gameSize,gameSize-2,gameSize-2);
       if ( gameRunning) {
         if(trail[i].x==xPos && trail[i].y==yPos) {
+          console.log(xVel + "," + yVel);
           resetGame();
           break;
         }
@@ -49,7 +50,7 @@ function game() {
     }
     trail.push({ x:xPos , y:yPos });
     while(trail.length>tail) {
-    trail.shift();
+      trail.shift();
     }
 
     moveRecord.push(getPosArr());
@@ -60,7 +61,7 @@ function game() {
         resetGame();
     }
 
-    if (loopsSinceApple >= 200 ) {
+    if (loopsSinceApple >= 75 ) {
       resetGame();
     }
     if(xApple == xPos && yApple == yPos) {
@@ -109,7 +110,7 @@ function keyPush(input) {
         xVel = 0;
         yVel = 1;
       }
-    } else {
+    } else if ( input == 'forward'){
       if ( yVel == 0 && xVel == 0) {
         yVel = -1;
       }
@@ -346,8 +347,8 @@ function getPosArr() {
 
   arr.push(relApple[0]);
   arr.push(relApple[1]);
-  console.log(relApple);
-  console.log("(" + xVel + "," + yVel + ")");
+  //console.log(relApple);
+  //console.log("(" + xVel + "," + yVel + ")");
   return arr;
 }
 /*
@@ -376,9 +377,64 @@ function getExpected(arr) {
   // If there is an object forward and right move left
   } else if (arr[1] == 1 && arr[2] == 1) {
     return 0;
-  // If snake has object to left and xApple left or forward
+  // If there is an object left and xApple is -1 or 0
+  } else if ( arr[0] == 1 && (arr[3] == -1 || arr[3] == 0)) {
+    // If yApple is -1 go right, else forward
+    if (arr[4] == -1) {
+      return 2;
+    } else {
+      return 1;
+    }
+  // If there is an object left and xApple is 1 go right
+  } else if (arr[0] == 1 && arr[3] == 1) {
+    return 2;
+  // If there is an object forward and xApple is -1 or 0 go left
+  }  else if (arr[1] == 1 && (arr[3] = -1 )|| arr[3] == 0) {
+    return 0;
+  // If there is an object forward and xApple is 1 go right
+  } else if (arr[1] == 1 && arr[3] == 1) {
+    return 2;
+  // If there is an object right and xApple is -1 go left
+  } else if (arr[2] == 1 && arr[3] == -1) {
+    return 0;
+  // If there is an object right and xApple is 0
+  } else if (arr[2] == 1 && arr[3]== 0){
+    // If yApple is -1 go forward else right
+    if (arr[4]== -1){
+      return 0;
+    } else {
+      return 1;
+    }
+  // If there is an object right and xApple is 1
+  } else if (arr[2] == 1 && arr[3]== 1) {
+    return 1;
+    // If there are no objects and xApple is -1 go left
+  } else if (arr[3] == -1) {
+    return 0;
+  // If there are no objects and xApple is 0
+  } else if (arr[3] == 0) {
+    // If yApple is -1 move left to turn around
+    if ( arr[4] == -1) {
+      return 0;
+    // Else move forward
+    } else {
+      return 1;
+    }
+  // If there are no objects and xApple is 1 go right
+  } else {
+    return 2;
+  }
+
+
+
+
+
+
+
+  /*
+  // If snake has object to left and xApple is -1
 } else if (arr[0] == 1 && (arr[3] == -1 || arr[3] == 0)) {
-    // Move forward if yApple is right or forward
+    // Move forward if yApple is left or forward
     if ( arr[4] == 1 || arr[4] == 0) {
       return 1;
     // Move left if yApple is left
@@ -432,5 +488,5 @@ function getExpected(arr) {
   // If snake has no objects around it and xApple is right move right
   } else {
     return 2;
-  }
+  }*/
 }
