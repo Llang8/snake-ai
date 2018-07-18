@@ -17,6 +17,7 @@ var gameRunning = true;
 var direction = ['left', 'forward', 'right'];
 var xApple = Math.floor(Math.random()*gameSize);
 var yApple = Math.floor(Math.random()*gameSize);
+var loopsSinceApple = 0;
 
 window.onload=function() {
     canv = document.getElementById("canvas");
@@ -31,14 +32,6 @@ function game() {
 
     if (xVel != 0 || yVel != 0) {
       gameRunning = true;
-    }
-
-    moveRecord.push(getPosArr());
-    keyPush(makePrediction(getPosArr()));;
-    //console.log(predictedInput);
-
-    if(xPos<0 || xPos > gameSize - 1 || yPos < 0 || yPos > gameSize - 1) {
-        resetGame();
     }
 
     ctx.fillStyle="black";
@@ -59,7 +52,19 @@ function game() {
     trail.shift();
     }
 
+    moveRecord.push(getPosArr());
+    keyPush(makePrediction(getPosArr()));;
+    //console.log(predictedInput);
+
+    if(xPos<0 || xPos > gameSize - 1 || yPos < 0 || yPos > gameSize - 1) {
+        resetGame();
+    }
+
+    if (loopsSinceApple >= 200 ) {
+      resetGame();
+    }
     if(xApple == xPos && yApple == yPos) {
+        loopsSinceApple = 0;
         tail++;
         score+=5;
         xApple = Math.floor(Math.random()*gameSize);
@@ -70,10 +75,10 @@ function game() {
     document.getElementById("score").innerHTML = "Score: " + score;
     document.getElementById("genCount").innerHTML = "Current Generation: " + currGen;
     //console.log(getPosArr());
+    loopsSinceApple++;
 }
 function keyPush(input) {
 
-    console.log(input);
     if ( input == 'left') {
       //console.log("in loop");
       if (yVel == -1) { // If snake is moving up
@@ -124,7 +129,7 @@ function resetGame() {
    yPos = 10;
    currGen++;
    fitModel(moveRecord);
-
+   loopsSinceApple = 0;
    moveRecord = [];
 }
 
@@ -156,11 +161,11 @@ function getPosArr() {
     }
 
     if ( yApple < yPos) {
-      relApple[1] = -1;
+      relApple[1] = 1;
     } else if ( yApple == yPos) {
       relApple[1] = 0;
     } else {
-      relApple[1] = 1;
+      relApple[1] = -1;
     }
 
     // CHECK FOR OBSTACLES
@@ -201,11 +206,11 @@ function getPosArr() {
     }
 
     if ( yApple < yPos) {
-      relApple[1] = 1;
+      relApple[1] = -1;
     } else if ( yApple == yPos) {
       relApple[1] = 0;
     } else {
-      relApple[1] = -1;
+      relApple[1] = 1;
     }
 
     // CHECK FOR OBSTACLES
@@ -245,11 +250,11 @@ function getPosArr() {
     }
 
     if ( yApple < yPos) {
-      relApple[0] = -1;
+      relApple[0] = 1;
     } else if ( yApple == yPos) {
       relApple[0] = 0;
     } else {
-      relApple[0] = 1;
+      relApple[0] = -1;
     }
 
     // CHECK FOR OBSTACLES
@@ -276,7 +281,7 @@ function getPosArr() {
         arr[2] = 1;
       }
     }
-  } else { // If snake is moving right
+  } else if ( xVel == 1){ // If snake is moving right
 
     // GET VALUES FOR RELATIVE APPLE POS
     if ( xApple < xPos) {
@@ -288,11 +293,11 @@ function getPosArr() {
     }
 
     if ( yApple < yPos) {
-      relApple[0] = 1;
+      relApple[0] = -1;
     } else if ( yApple == yPos) {
       relApple[0] = 0;
     } else {
-      relApple[0] = -1;
+      relApple[0] = 1;
     }
 
     if ( yPos == 0) {
@@ -320,11 +325,29 @@ function getPosArr() {
         arr[2] = 1;
       }
     }
+  } else {
+    // GET VALUES FOR RELATIVE APPLE POS
+    if ( xApple < xPos) {
+      relApple[0] = -1;
+    } else if (xApple == xPos) {
+      relApple[0] = 0;
+    } else {
+      relApple[0] = 1;
+    }
+
+    if ( yApple < yPos) {
+      relApple[1] = -1;
+    } else if ( yApple == yPos) {
+      relApple[1] = 0;
+    } else {
+      relApple[1] = 1;
+    }
   }
 
   arr.push(relApple[0]);
   arr.push(relApple[1]);
-  console.log(arr);
+  console.log(relApple);
+  console.log("(" + xVel + "," + yVel + ")");
   return arr;
 }
 /*
@@ -371,7 +394,7 @@ function getExpected(arr) {
         return 1;
       }
   // If snake has object forward and xApple left or foward go left
-} else if (arr[1] == 1 && (arr[3] == -1 || arr[3] == 0)) {
+  } else if (arr[1] == 1 && (arr[3] == -1 || arr[3] == 0)) {
     return 0;
   // If snake has object forward and xApple is right go right
   } else if (arr[1] == 1 && arr[3] == 1) {
@@ -400,7 +423,7 @@ function getExpected(arr) {
   // If snake has no objects around it and xApple is forward
   } else if (arr[3] == 0) {
     // If yApple is negative move left (by convention)
-    if ( arr[4] == -1) {
+    if ( arr[4] == 1) {
       return 0;
     // Else move forward
     } else {
