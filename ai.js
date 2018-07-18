@@ -3,14 +3,14 @@ var direction = ['left', 'forward', 'right'];
 // initial model definition
 const model = tf.sequential();
 // Initialize output layer
-model.add(tf.layers.dense({units: 3, inputShape: [3], activation: 'linear'}));
+model.add(tf.layers.dense({units: 3, inputShape: [5], activation: 'linear'}));
 
 
 let directionTensor = tf.tensor1d(direction, 'int32');;
 directionTensor.dispose();
 
 
-const adamOpt = tf.train.adam(.001);
+const adamOpt = tf.train.adam(.1);
 model.compile({
   optimizer: adamOpt,
   loss: 'meanSquaredError'
