@@ -6,7 +6,7 @@ var yAccel = 15;
 var xVel = 0;
 var yVel = 0;
 var trail=[];
-var setTail = 5;
+var setTail = 10;
 var tail = setTail;
 var score = 0;
 var highScore = 0;
@@ -142,10 +142,6 @@ function resetGame() {
 * 1: apple is positive direction (x or y)
 */
 function getPosArr() {
-  // Array pos:
-  // 0: left of snake
-  // 1: front of snake
-  // 2: right of snake
   var arr = [0,0,0];
   var relApple = [0,0];
   if ( yVel == -1 ) { // If snake is moving up
@@ -357,16 +353,17 @@ function getExpected(arr) {
   // If there is an object forward and right move left
   } else if (arr[1] == 1 && arr[2] == 1) {
     return 0;
-  // If snake has object to left and xApple right or forward
-  } else if (arr[0] == 1 && (arr[3] == 1 || arr[3] == 0)) {
-    // Move right if yApple is right
-    if ( arr[4] == 1) {
-      return 2;
-    } else {
+  // If snake has object to left and xApple left or forward
+} else if (arr[0] == 1 && (arr[3] == -1 || arr[3] == 0)) {
+    // Move forward if yApple is right or forward
+    if ( arr[4] == 1 || arr[4] == 0) {
       return 1;
+    // Move left if yApple is left
+    } else {
+      return 2;
     }
-  // If snake has object to the left and xApple is left
-  } else if (arr[0] == 1) {
+  // If snake has object to the left and xApple is right
+  } else if (arr[0] == 1 && arr[3] == 1) {
       // Move right if yApple is left or forward
       if ( arr[4] == 1 || arr[4] == 0) {
         return 2;
@@ -374,7 +371,7 @@ function getExpected(arr) {
         return 1;
       }
   // If snake has object forward and xApple left or foward go left
-  } else if (arr[1] == 1) {
+} else if (arr[1] == 1 && (arr[3] == -1 || arr[3] == 0)) {
     return 0;
   // If snake has object forward and xApple is right go right
   } else if (arr[1] == 1 && arr[3] == 1) {
