@@ -53,9 +53,11 @@ function game() {
       trail.shift();
     }
 
-    moveRecord.push(getPosArr());
-    keyPush(makePrediction(getPosArr()));;
-    //console.log(predictedInput);
+    moveRecord.push(getPosArr(xPos, yPos, xVel, yVel, xApple, yApple, trail, gameSize));
+    var vel = keyPush(makePrediction(getPosArr(xPos, yPos, xVel, yVel, xApple, yApple, trail, gameSize)), xVel, yVel);
+    xVel = vel[0];
+    yVel = vel[1];
+    //console.log(predicted_input);
 
     if(xPos<0 || xPos > gameSize - 1 || yPos < 0 || yPos > gameSize - 1) {
         resetGame();
@@ -78,43 +80,44 @@ function game() {
     //console.log(getPosArr());
     loopsSinceApple++;
 }
-function keyPush(input) {
+function keyPush(_input, _xVel, _yVel) {
 
-    if ( input == 'left') {
+    if ( _input == 'left') {
       //console.log("in loop");
-      if (yVel == -1) { // If snake is moving up
-        xVel = -1;
-        yVel = 0;
-      } else if ( yVel == 1) { // If snake is moving down
-        xVel = 1;
-        yVel = 0;
-      } else if ( xVel == -1) { // If snake is moving left
-        xVel = 0;
-        yVel = 1;
+      if (_yVel == -1) { // If snake is moving up
+        _xVel = -1;
+        _yVel = 0;
+      } else if ( _yVel == 1) { // If snake is moving down
+        _xVel = 1;
+        _yVel = 0;
+      } else if ( _xVel == -1) { // If snake is moving left
+        _xVel = 0;
+        _yVel = 1;
       } else { // If snake is moving right
-        xVel = 0;
-        yVel = -1;
+        _xVel = 0;
+        _yVel = -1;
       }
 
-    } else if ( input == 'right'){
-      if (yVel == -1) { // If snake is moving up
-        xVel = 1;
-        yVel = 0;
-      } else if ( yVel == 1) { // If snake is moving down
-        xVel = -1;
-        yVel = 0;
-      } else if ( xVel == -1) { // If snake is moving left
-        xVel = 0;
-        yVel = -1;
+    } else if ( _input == 'right'){
+      if (_yVel == -1) { // If snake is moving up
+        _xVel = 1;
+        _yVel = 0;
+      } else if ( _yVel == 1) { // If snake is moving down
+        _xVel = -1;
+        _yVel = 0;
+      } else if ( _xVel == -1) { // If snake is moving left
+        _xVel = 0;
+        _yVel = -1;
       } else { // If snake is moving right
-        xVel = 0;
-        yVel = 1;
+        _xVel = 0;
+        _yVel = 1;
       }
-    } else if ( input == 'forward'){
-      if ( yVel == 0 && xVel == 0) {
-        yVel = -1;
+    } else if ( _input == 'forward'){
+      if ( _yVel == 0 && _xVel == 0) {
+        _yVel = -1;
       }
     }
+    return [_xVel, _yVel];
 }
 function resetGame() {
    gameRunning = false;
@@ -147,212 +150,212 @@ function resetGame() {
 * 0: apple is at same position (x or y)
 * 1: apple is positive direction (x or y)
 */
-function getPosArr() {
-  var arr = [0,0,0];
-  var relApple = [0,0];
-  if ( yVel == -1 ) { // If snake is moving up
+function getPosArr(_xPos, _yPos, _xVel, _yVel, _xApple, _yApple, _trail, _gameSize) {
+  var _arr = [0,0,0];
+  var _relApple = [0,0];
+  if ( _yVel == -1 ) { // If snake is moving up
 
     // GET VALUES FOR RELATIVE APPLE POS
-    if ( xApple < xPos) {
-      relApple[0] = -1;
-    } else if (xApple == xPos) {
-      relApple[0] = 0;
+    if ( _xApple < _xPos) {
+      _relApple[0] = -1;
+    } else if (_xApple == _xPos) {
+      _relApple[0] = 0;
     } else {
-      relApple[0] = 1;
+      _relApple[0] = 1;
     }
 
-    if ( yApple < yPos) {
-      relApple[1] = 1;
-    } else if ( yApple == yPos) {
-      relApple[1] = 0;
+    if ( _yApple < _yPos) {
+      _relApple[1] = 1;
+    } else if ( _yApple == _yPos) {
+      _relApple[1] = 0;
     } else {
-      relApple[1] = -1;
+      _relApple[1] = -1;
     }
 
     // CHECK FOR OBSTACLES
-    if ( xPos == 0) {
-      arr[0] = 1;
+    if ( _xPos == 0) {
+      _arr[0] = 1;
     }
-    if ( yPos == 0) {
-      arr[1] = 1;
+    if ( _yPos == 0) {
+      _arr[1] = 1;
 
     }
-    if ( xPos == gameSize - 1) {
-      arr[2] = 1;
+    if ( _xPos == _gameSize - 1) {
+      _arr[2] = 1;
     }
-    for ( var i = 0; i < trail.length; i++) {
-      // If trail cell xPos is to the left and yPos is equal there is cell left
-      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
-        arr[0] = 1;
+    for ( var i = 0; i < _trail.length; i++) {
+      // If _trail cell _xPos is to the left and _yPos is equal there is cell left
+      if ( _trail[i].x == _xPos - 1 && _trail[i].y == _yPos) {
+        _arr[0] = 1;
       }
-      // If trail cell ypos is -1  than x is equal there is cell forward
-      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
-        arr[1] = 1;
+      // If _trail cell _yPos is -1  than x is equal there is cell forward
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos - 1) {
+        _arr[1] = 1;
       }
-      // If xpos is +1 than ypos is equal there is cell right
-      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
-        arr[2] = 1;
+      // If _xPos is +1 than _yPos is equal there is cell right
+      if ( _trail[i].x == _xPos + 1 && _trail[i].y == _yPos) {
+        _arr[2] = 1;
       }
     }
 
-  } else if ( yVel == 1) { // If snake is moving down
+  } else if ( _yVel == 1) { // If snake is moving down
 
     // GET VALUES FOR RELATIVE APPLE POS
-    if ( xApple < xPos) {
-      relApple[0] = 1;
-    } else if (xApple == xPos) {
-      relApple[0] = 0;
+    if ( _xApple < _xPos) {
+      _relApple[0] = 1;
+    } else if (_xApple == _xPos) {
+      _relApple[0] = 0;
     } else {
-      relApple[0] = -1;
+      _relApple[0] = -1;
     }
 
-    if ( yApple < yPos) {
-      relApple[1] = -1;
-    } else if ( yApple == yPos) {
-      relApple[1] = 0;
+    if ( _yApple < _yPos) {
+      _relApple[1] = -1;
+    } else if ( _yApple == _yPos) {
+      _relApple[1] = 0;
     } else {
-      relApple[1] = 1;
+      _relApple[1] = 1;
     }
 
     // CHECK FOR OBSTACLES
-    if ( xPos == gameSize - 1) {
-      arr[0] = 1;
+    if ( _xPos == _gameSize - 1) {
+      _arr[0] = 1;
     }
-    if ( yPos == gameSize - 1) {
-      arr[1] = 1;
+    if ( _yPos == _gameSize - 1) {
+      _arr[1] = 1;
     }
-    if ( xPos == 0) {
-      arr[2] = 1;
+    if ( _xPos == 0) {
+      _arr[2] = 1;
     }
-    for ( var i = 0; i < trail.length; i++) {
-      // If trail cell xPos is 1 greater and y is equal there is cell left
-      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
-        arr[0] = 1;
+    for ( var i = 0; i < _trail.length; i++) {
+      // If _trail cell _xPos is 1 greater and y is equal there is cell left
+      if ( _trail[i].x == _xPos + 1 && _trail[i].y == _yPos) {
+        _arr[0] = 1;
       }
-      // If trail cell yPos is 1 greater and x is equal there is cell forward
-      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
-        arr[1] = 1;
+      // If _trail cell _yPos is 1 greater and x is equal there is cell forward
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos + 1) {
+        _arr[1] = 1;
       }
-      // If trail cell xPos is to the left and yPos is equal there is cell right
-      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
-        arr[2] = 1;
+      // If _trail cell _xPos is to the left and _yPos is equal there is cell right
+      if ( _trail[i].x == _xPos - 1 && _trail[i].y == _yPos) {
+        _arr[2] = 1;
       }
     }
 
-  } else if ( xVel == -1) { // If snake is moving left
+  } else if ( _xVel == -1) { // If snake is moving left
 
     // GET VALUES FOR RELATIVE APPLE POS
-    if ( xApple < xPos) {
-      relApple[1] = -1;
-    } else if (xApple == xPos) {
-      relApple[1] = 0;
+    if ( _xApple < _xPos) {
+      _relApple[1] = -1;
+    } else if (_xApple == _xPos) {
+      _relApple[1] = 0;
     } else {
-      relApple[1] = 1;
+      _relApple[1] = 1;
     }
 
-    if ( yApple < yPos) {
-      relApple[0] = 1;
-    } else if ( yApple == yPos) {
-      relApple[0] = 0;
+    if ( _yApple < _yPos) {
+      _relApple[0] = 1;
+    } else if ( _yApple == _yPos) {
+      _relApple[0] = 0;
     } else {
-      relApple[0] = -1;
+      _relApple[0] = -1;
     }
 
     // CHECK FOR OBSTACLES
-    if ( yPos == gameSize - 1) {
-      arr[0] = 1;
+    if ( _yPos == _gameSize - 1) {
+      _arr[0] = 1;
     }
-    if ( xPos == 0) {
-      arr[1] = 1;
+    if ( _xPos == 0) {
+      _arr[1] = 1;
     }
-    if ( yPos == 0) {
-      arr[2] = 1;
+    if ( _yPos == 0) {
+      _arr[2] = 1;
     }
-    for ( var i = 0; i < trail.length; i++) {
-      // If trail cell xPos is equal and yPos is +1 there is cell left
-      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
-        arr[0] = 1;
+    for ( var i = 0; i < _trail.length; i++) {
+      // If _trail cell _xPos is equal and _yPos is +1 there is cell left
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos + 1) {
+        _arr[0] = 1;
       }
-      // If trail cell xPos is -1 and y is equal there is cell forward
-      if ( trail[i].x == xPos - 1 && trail[i].y == yPos) {
-        arr[1] = 1;
+      // If _trail cell _xPos is -1 and y is equal there is cell forward
+      if ( _trail[i].x == _xPos - 1 && _trail[i].y == _yPos) {
+        _arr[1] = 1;
       }
-      // If trail cell yPos is 1 less than and x is equal there is cell right
-      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
-        arr[2] = 1;
+      // If _trail cell _yPos is 1 less than and x is equal there is cell right
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos - 1) {
+        _arr[2] = 1;
       }
     }
-  } else if ( xVel == 1){ // If snake is moving right
+  } else if ( _xVel == 1){ // If snake is moving right
 
     // GET VALUES FOR RELATIVE APPLE POS
-    if ( xApple < xPos) {
-      relApple[1] = 1;
-    } else if (xApple == xPos) {
-      relApple[1] = 0;
+    if ( _xApple < _xPos) {
+      _relApple[1] = 1;
+    } else if (_xApple == _xPos) {
+      _relApple[1] = 0;
     } else {
-      relApple[1] = -1;
+      _relApple[1] = -1;
     }
 
-    if ( yApple < yPos) {
-      relApple[0] = -1;
-    } else if ( yApple == yPos) {
-      relApple[0] = 0;
+    if ( _yApple < _yPos) {
+      _relApple[0] = -1;
+    } else if ( _yApple == _yPos) {
+      _relApple[0] = 0;
     } else {
-      relApple[0] = 1;
+      _relApple[0] = 1;
     }
 
-    if ( yPos == 0) {
-      arr[0] = 1;
+    if ( _yPos == 0) {
+      _arr[0] = 1;
     }
-    if ( xPos == gameSize - 1) {
-      arr[1] = 1;
+    if ( _xPos == _gameSize - 1) {
+      _arr[1] = 1;
     }
-    if ( yPos == gameSize - 1) {
-      arr[2] = 1;
+    if ( _yPos == _gameSize - 1) {
+      _arr[2] = 1;
     }
 
     // CHECK FOR OBSTACLES
-    for ( var i = 0; i < trail.length; i++) {
-      // If trail cell xPos is equal and yPos is is -1 there is cell left
-      if ( trail[i].x == xPos && trail[i].y == yPos - 1) {
-        arr[0] = 1;
+    for ( var i = 0; i < _trail.length; i++) {
+      // If _trail cell _xPos is equal and _yPos is is -1 there is cell left
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos - 1) {
+        _arr[0] = 1;
       }
-      // If trail cell xPos is +1 and y is equal there is cell forward
-      if ( trail[i].x == xPos + 1 && trail[i].y == yPos) {
-        arr[1] = 1;
+      // If _trail cell _xPos is +1 and y is equal there is cell forward
+      if ( _trail[i].x == _xPos + 1 && _trail[i].y == _yPos) {
+        _arr[1] = 1;
       }
-      // If trail cell yPos is 1 greater and x is equal there is cell right
-      if ( trail[i].x == xPos && trail[i].y == yPos + 1) {
-        arr[2] = 1;
+      // If _trail cell _yPos is 1 greater and x is equal there is cell right
+      if ( _trail[i].x == _xPos && _trail[i].y == _yPos + 1) {
+        _arr[2] = 1;
       }
     }
   } else {
     // GET VALUES FOR RELATIVE APPLE POS
-    if ( xApple < xPos) {
-      relApple[0] = -1;
-    } else if (xApple == xPos) {
-      relApple[0] = 0;
+    if ( _xApple < _xPos) {
+      _relApple[0] = -1;
+    } else if (_xApple == _xPos) {
+      _relApple[0] = 0;
     } else {
-      relApple[0] = 1;
+      _relApple[0] = 1;
     }
 
-    if ( yApple < yPos) {
-      relApple[1] = -1;
-    } else if ( yApple == yPos) {
-      relApple[1] = 0;
+    if ( _yApple < _yPos) {
+      _relApple[1] = -1;
+    } else if ( _yApple == _yPos) {
+      _relApple[1] = 0;
     } else {
-      relApple[1] = 1;
+      _relApple[1] = 1;
     }
   }
 
-  arr.push(relApple[0]);
-  arr.push(relApple[1]);
-  //console.log(relApple);
-  //console.log("(" + xVel + "," + yVel + ")");
-  return arr;
+  _arr.push(_relApple[0]);
+  _arr.push(_relApple[1]);
+  //console.log(_relApple);
+  //console.log("(" + _xVel + "," + __yVel + ")");
+  return _arr;
 }
 /*
-* Takes in data that is input into the model during training and returns the
+* Takes in data that is _input into the model during training and returns the
 * expected response from a prediction.
 * @params arr describing surroundings
 * arr[0]: if 1 something is to the left
@@ -367,54 +370,54 @@ function getPosArr() {
 * 1: Go forward
 * 2: Turn Right
 */
-function getExpected(arr) {
+function getExpected(_arr) {
   // If there is an object left and forward move right
-  if ( arr[0] == 1 && arr[1] == 1) {
+  if ( _arr[0] == 1 && _arr[1] == 1) {
     return 2;
   // If there is an object left and right move forward
-  } else if (arr[0] == 1 && arr[2] == 1) {
+  } else if (_arr[0] == 1 && _arr[2] == 1) {
     return 1;
   // If there is an object forward and right move left
-  } else if (arr[1] == 1 && arr[2] == 1) {
+  } else if (_arr[1] == 1 && _arr[2] == 1) {
     return 0;
   // If there is an object left and xApple is -1 or 0
-  } else if ( arr[0] == 1 && (arr[3] == -1 || arr[3] == 0)) {
+  } else if ( _arr[0] == 1 && (_arr[3] == -1 || _arr[3] == 0)) {
     // If yApple is -1 go right, else forward
-    if (arr[4] == -1) {
+    if (_arr[4] == -1) {
       return 2;
     } else {
       return 1;
     }
   // If there is an object left and xApple is 1 go right
-  } else if (arr[0] == 1 && arr[3] == 1) {
+  } else if (_arr[0] == 1 && _arr[3] == 1) {
     return 2;
   // If there is an object forward and xApple is -1 or 0 go left
-  }  else if (arr[1] == 1 && (arr[3] = -1 )|| arr[3] == 0) {
+  }  else if (_arr[1] == 1 && (_arr[3] = -1 )|| _arr[3] == 0) {
     return 0;
   // If there is an object forward and xApple is 1 go right
-  } else if (arr[1] == 1 && arr[3] == 1) {
+  } else if (_arr[1] == 1 && _arr[3] == 1) {
     return 2;
   // If there is an object right and xApple is -1 go left
-  } else if (arr[2] == 1 && arr[3] == -1) {
+  } else if (_arr[2] == 1 && _arr[3] == -1) {
     return 0;
   // If there is an object right and xApple is 0
-  } else if (arr[2] == 1 && arr[3]== 0){
+  } else if (_arr[2] == 1 && _arr[3]== 0){
     // If yApple is -1 go forward else right
-    if (arr[4]== -1){
+    if (_arr[4]== -1){
       return 0;
     } else {
       return 1;
     }
   // If there is an object right and xApple is 1
-  } else if (arr[2] == 1 && arr[3]== 1) {
+  } else if (_arr[2] == 1 && _arr[3]== 1) {
     return 1;
     // If there are no objects and xApple is -1 go left
-  } else if (arr[3] == -1) {
+  } else if (_arr[3] == -1) {
     return 0;
   // If there are no objects and xApple is 0
-  } else if (arr[3] == 0) {
+  } else if (_arr[3] == 0) {
     // If yApple is -1 move left to turn around
-    if ( arr[4] == -1) {
+    if ( _arr[4] == -1) {
       return 0;
     // Else move forward
     } else {
@@ -425,68 +428,4 @@ function getExpected(arr) {
     return 2;
   }
 
-
-
-
-
-
-
-  /*
-  // If snake has object to left and xApple is -1
-} else if (arr[0] == 1 && (arr[3] == -1 || arr[3] == 0)) {
-    // Move forward if yApple is left or forward
-    if ( arr[4] == 1 || arr[4] == 0) {
-      return 1;
-    // Move left if yApple is left
-    } else {
-      return 2;
-    }
-  // If snake has object to the left and xApple is right
-  } else if (arr[0] == 1 && arr[3] == 1) {
-      // Move right if yApple is left or forward
-      if ( arr[4] == 1 || arr[4] == 0) {
-        return 2;
-      } else {
-        return 1;
-      }
-  // If snake has object forward and xApple left or foward go left
-  } else if (arr[1] == 1 && (arr[3] == -1 || arr[3] == 0)) {
-    return 0;
-  // If snake has object forward and xApple is right go right
-  } else if (arr[1] == 1 && arr[3] == 1) {
-    return 2;
-  // If snake has object right and xApple is left
-  } else if (arr[2] == 1 && arr[3] == -1) {
-    // If yApple is left or right move forward
-    if ( arr[4] == -1 || arr[4] == 1) {
-      return 1;
-    // If yApple is forward move left
-    } else {
-      return 0;
-    }
-  // If snake has object right and xApple is forward
-  } else if (arr[2] == 1 && arr[3] == 0) {
-    // If snake has apple to the left move left
-    if (arr[4] == -1) {
-      return 0;
-    // else move forward
-    } else {
-      return 1;
-    }
-  // If snake has no objects around it and xApple is left move left
-  } else if (arr[3] == -1) {
-    return 0;
-  // If snake has no objects around it and xApple is forward
-  } else if (arr[3] == 0) {
-    // If yApple is negative move left (by convention)
-    if ( arr[4] == 1) {
-      return 0;
-    // Else move forward
-    } else {
-      return 1;
-    }
-  // If snake has no objects around it and xApple is right move right
-  } else {
-    return 2;
-  }*/
 }
